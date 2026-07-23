@@ -1,0 +1,97 @@
+/* ============================================================
+   SHOP — Liquid Glass iOS
+   ============================================================ */
+.shop-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 12px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.shop-tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  border-radius: 999px; /* iOS Pill */
+  padding: 8px 20px; font-size: 13px; font-weight: 500;
+  white-space: nowrap; transition: all 0.2s var(--spring);
+}
+.tab.active {
+  background: var(--text-primary); color: #000; border-color: var(--text-primary);
+}
+
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.item-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 16px; transition: transform 0.2s var(--spring-bouncy);
+}
+.item-card:active { transform: scale(0.96); }
+
+.item-art {
+  height: 80px; border-radius: var(--radius-sm);
+  background: rgba(0,0,0,0.2);
+  display: grid; place-items: center; margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.item-art svg { width: 44px; height: 44px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+
+.item-name { font-weight: 600; font-size: 14px; }
+.item-stat { color: var(--text-secondary); font-size: 12px; margin: 4px 0 12px; }
+
+.item-foot { display: flex; align-items: center; justify-content: space-between; }
+.price { font-weight: 700; font-size: 13px; color: var(--gold); }
+
+.btn-buy {
+  background: rgba(255,255,255,0.1); color: #fff; border-radius: 999px;
+  font-size: 11px; font-weight: 600; padding: 6px 14px;
+  transition: background 0.2s ease;
+}
+.btn-buy:not(:disabled):hover { background: var(--primary); }
+.btn-buy:disabled { opacity: 0.3; }
+
+body[data-theme="light"] .tab {
+  background: rgba(255, 255, 255, 0.56);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.76);
+}
+
+body[data-theme="light"] .tab.active {
+  background: #142033;
+  color: #fff;
+  border-color: rgba(20, 32, 51, 0.12);
+  box-shadow: 0 10px 22px rgba(47, 73, 102, 0.18);
+}
+
+body[data-theme="light"] .item-card {
+  box-shadow: var(--glass-shadow);
+}
+
+body[data-theme="light"] .item-art {
+  background: linear-gradient(145deg, rgba(255,255,255,0.64), rgba(224,238,248,0.42));
+  border-color: rgba(73, 100, 126, 0.1);
+}
+
+body[data-theme="light"] .item-art svg {
+  filter: drop-shadow(0 8px 14px rgba(65, 91, 116, 0.18));
+}
+
+body[data-theme="light"] .btn-buy {
+  background: #142033;
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(47, 73, 102, 0.16);
+}

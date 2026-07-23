@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Fit Quest — Liquid Glass Gaming HUD" />
+  <title>Fit Quest — Liquid Glass</title>
+
+  <!-- Google Fonts: Inter (Clean iOS readability) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="css/shop.css" rel="stylesheet" />
+  <link href="css/gear.css" rel="stylesheet" />
+  <link href="css/quest.css" rel="stylesheet" />
+  <link href="css/setting.css" rel="stylesheet" />
+</head>
+
+<body>
+
+  <!-- Liquid Glass Ambient Background -->
+  <div class="ambient-background" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Loading Screen (iOS Style Glass) -->
+  <div id="loading-screen" role="alert" aria-label="Loading">
+    <div class="glass-spinner"></div>
+    <div class="loader-text">SYNCING DATA</div>
+  </div>
+
+  <!-- Page Transition Overlay -->
+  <div id="page-transition" aria-hidden="true"></div>
+
+  <!-- SCREEN: LOGIN -->
+  <main class="screen active" id="login-screen" aria-label="Login Screen">
+    <div class="login-content">
+      <div class="login-header">
+        <h1>Fit Quest</h1>
+        <p>LEVEL UP YOUR FITNESS</p>
+      </div>
+
+      <div class="input-group">
+        <input class="input-glass" id="username-input" placeholder="Username" type="text" aria-label="Username" autocomplete="username" />
+        <input class="input-glass" id="password-input" placeholder="Password" type="password" aria-label="Password" autocomplete="current-password" />
+        <button class="btn btn-primary" id="login-btn" onclick="playGame()" aria-label="เข้าสู่ระบบ">INITIALIZE</button>
+      </div>
+
+      <div class="divider"><span>OR</span></div>
+
+      <button class="btn btn-glass" onclick="playGame()" aria-label="ล็อกอินด้วย Google">
+        <svg viewBox="0 0 48 48">
+          <path d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" fill="#EA4335"></path>
+          <path d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" fill="#4285F4"></path>
+          <path d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" fill="#FBBC05"></path>
+          <path d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" fill="#34A853"></path>
+        </svg>
+        Sign in with Google
+      </button>
+    </div>
+  </main>
+
+  <!-- SCREEN: MAIN APP -->
+  <main class="screen" id="app-screen" aria-label="Main App">
+
+    <!-- Top Bar (Glass) -->
+    <header class="topbar">
+      <div class="avatar"><img alt="Avatar" src="assets/men_avartar.png" /></div>
+      <div class="top-meta"><div class="hello">READY FOR ACTION</div></div>
+      <div class="wallet"><span>💰</span><span id="coinCount">9,999</span></div>
+    </header>
+
+    <!-- Level Strip -->
+    <div class="level-strip">
+      <span class="level-chip">LV. 67</span>
+      <span class="level-track"><span class="level-fill" style="width: 72%"></span></span>
+      <span class="level-text">780 / 1080 XP</span>
+    </div>
+
+    <!-- Views Content -->
+    <section class="content">
+
+      <!-- VIEW: PLAY / Adventure -->
+      <div class="view active" id="view-play">
+        <div class="section-head">
+          <h1>Adventure</h1>
+          <p class="sub">Daily fitness missions</p>
+        </div>
+        <div class="stats stagger-in">
+          <div class="stat glass-card">
+            <span class="sub">HP (Health)</span>
+            <strong>100%</strong>
+            <div class="meter"><span style="width:100%; background: var(--success);"></span></div>
+          </div>
+          <div class="stat glass-card">
+            <span class="sub">EXP Today</span>
+            <strong>780</strong>
+            <div class="meter"><span style="width:72%; background: var(--primary);"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: SHOP -->
+      <div class="view" id="view-shop">
+        <div class="section-head">
+          <h1>Item Shop</h1>
+          <p class="sub">Upgrade your loadout</p>
+        </div>
+        <div class="shop-tabs" id="shopTabs"></div>
+        <div class="shop-grid stagger-in" id="shopGrid"></div>
+      </div>
+
+      <!-- VIEW: EQUIPMENT -->
+      <div class="view" id="view-equipment">
+        <div class="section-head">
+          <h1>Equipment</h1>
+          <p class="sub">Manage your gear</p>
+        </div>
+        <div class="equip-stage glass-card">
+          <div class="slot head" data-slot="Helmet"><strong>HELMET</strong><span>ว่าง</span></div>
+          <div class="slot body" data-slot="Armor"><strong>ARMOR</strong><span>ว่าง</span></div>
+          <div class="slot feet" data-slot="Shoes"><strong>SHOES</strong><span>ว่าง</span></div>
+          <div class="slot hand" data-slot="Gloves"><strong>GLOVES</strong><span>ว่าง</span></div>
+          <div class="slot weapon" data-slot="Weapon"><strong>WEAPON</strong><span>ว่าง</span></div>
+          <div class="player"><img alt="Character" class="player-img" src="assets/men.png" /></div>
+        </div>
+        <div class="inventory stagger-in" id="inventoryGrid"></div>
+      </div>
+
+      <!-- VIEW: QUEST -->
+      <div class="view" id="view-quest">
+        <div class="section-head">
+          <h1>Daily Quest</h1>
+          <p class="sub">Complete tasks for rewards</p>
+        </div>
+        <div class="quest-list stagger-in" id="questList"></div>
+      </div>
+
+      <!-- VIEW: SETTINGS -->
+      <div class="view" id="view-setting">
+        <div class="section-head">
+          <h1>Settings</h1>
+          <p class="sub">System configuration</p>
+        </div>
+        <div class="settings stagger-in">
+          <!-- Profile Card -->
+          <div class="glass-card profile-card">
+            <div class="avatar"><img alt="Avatar" src="assets/men.png" /></div>
+            <div>
+              <h2 style="margin:0;">Player One</h2>
+              <p class="sub" style="margin:0;">Level 67 &middot; Warrior</p>
+            </div>
+          </div>
+
+          <!-- Appearance Settings -->
+          <div class="group glass-card">
+            <div class="row theme-row">
+              <div>
+                <div class="row-title">Appearance</div>
+                <div class="row-note">Choose your glass theme</div>
+              </div>
+              <div class="theme-toggle" role="group" aria-label="Theme mode">
+                <button class="theme-option active" type="button" data-theme-choice="dark" aria-pressed="true">
+                  <span>Dark</span>
+                </button>
+                <button class="theme-option" type="button" data-theme-choice="light" aria-pressed="false">
+                  <span>Light</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sound Settings -->
+          <div class="group glass-card">
+            <div class="row">
+              <div><div class="row-title">SFX</div><div class="row-note">UI and action sounds</div></div>
+              <button class="ios-switch on" aria-label="Toggle SFX"><span></span></button>
+            </div>
+            <div class="row">
+              <div><div class="row-title">BGM</div><div class="row-note">Background music</div></div>
+              <button class="ios-switch on" aria-label="Toggle BGM"><span></span></button>
+            </div>
+            <div class="row">
+              <div><div class="row-title">Volume</div></div>
+              <input max="100" min="0" type="range" value="78" aria-label="Volume" />
+            </div>
+          </div>
+
+          <!-- Notification & Logout -->
+          <div class="group glass-card">
+            <div class="row">
+              <div><div class="row-title">Notifications</div><div class="row-note">Quest reminders</div></div>
+              <button class="ios-switch on" aria-label="Toggle Notifications"><span></span></button>
+            </div>
+            <div class="row logout-row" onclick="logout()" style="cursor:pointer" role="button" tabindex="0">
+              <div><div class="row-title danger-text">Logout</div></div>
+              <span class="logout-arrow">›</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Navigation (Heavy Glass) -->
+    <nav class="bottom-nav" aria-label="Main Navigation">
+      <button class="nav" data-view="shop" aria-label="Shop"><i>🛒</i><span>SHOP</span></button>
+      <button class="nav" data-view="equipment" aria-label="Equipment"><i>🎒</i><span>GEAR</span></button>
+      <button class="nav play active" data-view="play" aria-label="Play">
+        <div class="play-inner"><i>⚔️</i></div>
+      </button>
+      <button class="nav" data-view="quest" aria-label="Quest"><i>📜</i><span>QUEST</span></button>
+      <button class="nav" data-view="setting" aria-label="Settings"><i>⚙️</i><span>SET</span></button>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div class="toast glass-card" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/supabase-auth.js"></script>
+</body>
+</html>

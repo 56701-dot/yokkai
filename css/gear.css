@@ -1,0 +1,75 @@
+/* ============================================================
+   EQUIPMENT — Liquid Glass iOS
+   ============================================================ */
+.equip-stage {
+  height: 260px; position: relative; margin-bottom: 20px;
+  border-radius: var(--radius-lg); overflow: hidden;
+  /* Inner shadow for depth */
+  box-shadow: inset 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.slot {
+  position: absolute;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px; min-width: 80px;
+  transition: transform 0.2s var(--spring-bouncy);
+}
+.slot:active { transform: scale(0.95); }
+
+.slot strong { font-size: 9px; color: var(--text-muted); display: block; letter-spacing: 1px; }
+.slot span { font-weight: 600; font-size: 12px; color: var(--text-secondary); }
+
+.slot.equipped { border-color: var(--primary); background: rgba(0,122,255,0.1); }
+.slot.equipped span { color: #fff; }
+
+.slot.head { right: 16px; top: 16px; }
+.slot.body { right: 16px; top: 86px; }
+.slot.feet { right: 16px; bottom: 16px; }
+.slot.hand { left: 16px; top: 50px; }
+.slot.weapon { left: 16px; bottom: 50px; }
+
+.player { position: absolute; left: 50%; bottom: 20px; width: 90px; transform: translateX(-50%); pointer-events: none; }
+.player-img { width: 100%; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+
+.inventory { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.inv-cell {
+  aspect-ratio: 1; border-radius: var(--radius-md);
+  background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  display: grid; place-items: center; transition: transform 0.2s var(--spring-bouncy);
+}
+.inv-cell:active { transform: scale(0.92); }
+.inv-cell svg { width: 34px; height: 34px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+
+.inv-cell.empty { background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.1); }
+.inv-cell.selected { border-color: var(--primary); box-shadow: inset 0 0 0 2px var(--primary); }
+
+body[data-theme="light"] .equip-stage {
+  background: linear-gradient(160deg, rgba(255,255,255,0.46), rgba(224,238,248,0.28));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 18px 46px rgba(52, 82, 112, 0.12);
+}
+
+body[data-theme="light"] .slot {
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 10px 20px rgba(52, 82, 112, 0.1);
+}
+
+body[data-theme="light"] .slot.equipped {
+  background: rgba(11, 132, 255, 0.12);
+}
+
+body[data-theme="light"] .slot.equipped span {
+  color: var(--primary);
+}
+
+body[data-theme="light"] .player-img {
+  filter: drop-shadow(0 16px 22px rgba(47, 73, 102, 0.22));
+}
+
+body[data-theme="light"] .inv-cell.empty {
+  background: rgba(255, 255, 255, 0.34);
+  border-color: rgba(73, 100, 126, 0.18);
+}

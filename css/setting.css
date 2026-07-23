@@ -1,0 +1,126 @@
+/* ============================================================
+   SETTING — Liquid Glass iOS
+   ============================================================ */
+.settings { display: grid; gap: 20px; }
+
+.profile-card {
+  display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+}
+.profile-card .avatar { width: 56px; height: 56px; border-radius: 50%; padding: 0; border: none; }
+
+.group {
+  display: grid; border-radius: var(--radius-lg); overflow: hidden;
+}
+
+.row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--glass-border);
+}
+.row:last-child { border-bottom: 0; }
+.row-title { font-weight: 500; font-size: 15px; }
+.row-note { color: var(--text-secondary); font-size: 12px; margin-top: 4px; }
+
+.danger-text { color: var(--danger) !important; }
+
+.theme-row {
+  gap: 14px;
+}
+
+.theme-toggle {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 var(--glass-border-highlight);
+}
+
+.theme-option {
+  min-width: 64px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.25s var(--spring), color 0.25s var(--spring), transform 0.25s var(--spring);
+}
+
+.theme-option.active {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.theme-option:active {
+  transform: scale(0.96);
+}
+
+/* ── iOS Toggle Switch ── */
+.ios-switch {
+  width: 50px; height: 30px; border-radius: 30px;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.3s ease; position: relative;
+}
+.ios-switch span {
+  position: absolute; top: 2px; left: 2px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.3s var(--spring-bouncy);
+}
+.ios-switch.on { background: var(--success); }
+.ios-switch.on span { transform: translateX(20px); }
+
+/* ── Range Slider ── */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 130px; height: 6px; border-radius: 6px;
+  background: rgba(255,255,255,0.1); outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+body[data-theme="light"] .theme-toggle {
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 10px 22px rgba(52, 82, 112, 0.08);
+}
+
+body[data-theme="light"] .theme-option.active {
+  background: #142033;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(47, 73, 102, 0.18);
+}
+
+body[data-theme="light"] .ios-switch {
+  background: rgba(52, 82, 112, 0.16);
+}
+
+body[data-theme="light"] .ios-switch span,
+body[data-theme="light"] input[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0 4px 12px rgba(52, 82, 112, 0.18);
+}
+
+body[data-theme="light"] input[type="range"] {
+  background: rgba(52, 82, 112, 0.14);
+}
+
+@media (max-width: 360px) {
+  .theme-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .theme-toggle {
+    width: 100%;
+  }
+
+  .theme-option {
+    flex: 1;
+  }
+}
