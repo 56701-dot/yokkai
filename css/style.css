@@ -9,6 +9,12 @@
   /* ── Glassmorphism ── */
   --glass-bg: rgba(20, 20, 25, 0.45);
   --glass-bg-hover: rgba(40, 40, 50, 0.55);
+  --glass-alpha: 0.45;
+  --glass-hover-alpha: 0.55;
+  --glass-panel-alpha: 0.57;
+  --glass-control-alpha: 0.51;
+  --slider-track-bg: rgba(255, 255, 255, 0.16);
+  --slider-track-border: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.15);
   --glass-border-highlight: rgba(255, 255, 255, 0.3);
   --glass-blur: blur(30px);
@@ -44,6 +50,12 @@ body[data-theme="light"] {
   --bg-primary: #f3f7fb;
   --glass-bg: rgba(255, 255, 255, 0.58);
   --glass-bg-hover: rgba(255, 255, 255, 0.78);
+  --glass-alpha: 0.58;
+  --glass-hover-alpha: 0.78;
+  --glass-panel-alpha: 0.70;
+  --glass-control-alpha: 0.64;
+  --slider-track-bg: rgba(52, 82, 112, 0.26);
+  --slider-track-border: rgba(52, 82, 112, 0.12);
   --glass-border: rgba(73, 100, 126, 0.16);
   --glass-border-highlight: rgba(255, 255, 255, 0.92);
   --glass-shadow: 0 18px 50px rgba(52, 82, 112, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
@@ -78,6 +90,16 @@ html, body {
 
 body {
   transition: background 0.35s var(--spring), color 0.35s var(--spring);
+}
+
+body {
+  --glass-bg: rgba(20, 20, 25, var(--glass-alpha));
+  --glass-bg-hover: rgba(40, 40, 50, var(--glass-hover-alpha));
+}
+
+body[data-theme="light"] {
+  --glass-bg: rgba(255, 255, 255, var(--glass-alpha));
+  --glass-bg-hover: rgba(255, 255, 255, var(--glass-hover-alpha));
 }
 
 body[data-theme="light"] {
@@ -253,7 +275,60 @@ body[data-theme="light"] .login-header h1 {
   color: var(--text-secondary); font-size: 13px; font-weight: 600; letter-spacing: 1px;
 }
 
+.auth-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 5px;
+  margin-bottom: 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.auth-mode {
+  min-height: 42px;
+  border-radius: calc(var(--radius-md) - 6px);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s var(--spring-bouncy);
+}
+
+.auth-mode.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 22px var(--primary-glow);
+}
+
+.auth-mode:active { transform: scale(0.97); }
+
 .input-group { display: flex; flex-direction: column; gap: 16px; }
+.input-group[data-auth-mode="login"] .signup-only { display: none; }
+.input-group[data-auth-mode="login"] .reset-only,
+.input-group[data-auth-mode="login"] .reset-phone-only,
+.input-group[data-auth-mode="login"] .reset-new-password-only { display: none; }
+.input-group[data-auth-mode="register"] #login-btn { display: none; }
+.input-group[data-auth-mode="register"] .login-only,
+.input-group[data-auth-mode="register"] .reset-only,
+.input-group[data-auth-mode="register"] .reset-phone-only,
+.input-group[data-auth-mode="register"] .reset-new-password-only { display: none; }
+.input-group[data-auth-mode="reset"] #username-input,
+.input-group[data-auth-mode="reset"] #signup-username-input,
+.input-group[data-auth-mode="reset"] #password-input,
+.input-group[data-auth-mode="reset"] #confirm-password-input,
+.input-group[data-auth-mode="reset"] #login-btn,
+.input-group[data-auth-mode="reset"] #register-btn,
+.input-group[data-auth-mode="reset"] .login-only,
+.input-group[data-auth-mode="reset"] .signup-only,
+.input-group[data-auth-reset-step="request"] .reset-phone-only,
+.input-group[data-auth-reset-step="request"] .reset-new-password-only,
+.input-group[data-auth-reset-step="phone"] #reset-request-btn,
+.input-group[data-auth-reset-step="email-update"] #reset-identifier-input,
+.input-group[data-auth-reset-step="email-update"] #reset-request-btn,
+.input-group[data-auth-reset-step="email-update"] .reset-phone-only { display: none; }
 .input-glass {
   width: 100%; padding: 18px 20px;
   border-radius: var(--radius-md);
@@ -268,6 +343,23 @@ body[data-theme="light"] .login-header h1 {
   background: var(--glass-bg-hover);
   border-color: var(--primary);
   box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.auth-link {
+  align-self: center;
+  min-height: 28px;
+  padding: 2px 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.auth-link:hover { color: var(--text-primary); }
+.auth-link:disabled {
+  cursor: wait;
+  opacity: 0.58;
 }
 
 .divider {
@@ -320,10 +412,6 @@ body[data-theme="light"] .login-header h1 {
 .auth-feedback[data-type="error"] { color: var(--danger); }
 .auth-feedback[data-type="success"] { color: var(--success); }
 
-#register-btn {
-  margin-top: 16px;
-}
-
 /* ============================================================
    TOP APP BAR (GLASS)
    ============================================================ */
@@ -334,6 +422,20 @@ body[data-theme="light"] .login-header h1 {
   backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
   border-bottom: 1px solid var(--glass-border);
   z-index: 5;
+}
+
+.profile-trigger {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.profile-trigger:active {
+  transform: scale(0.985);
 }
 
 body[data-theme="light"] .topbar {
@@ -347,6 +449,9 @@ body[data-theme="light"] .topbar {
 }
 .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .top-meta { flex: 1; }
+.profile-trigger .top-meta {
+  display: block;
+}
 .hello {
   font-size: 11px; font-weight: 600;
   color: var(--text-secondary); letter-spacing: 0.5px;
@@ -491,13 +596,12 @@ body[data-theme="light"] .bottom-nav {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 5px; position: relative; border-radius: var(--radius-md);
   color: var(--text-muted);
-  transition: color 0.25s ease, transform 0.2s var(--spring-bouncy), background 0.25s ease;
+  transition: color 0.25s ease, background 0.25s ease;
 }
 .nav i { font-size: 20px; line-height: 1; font-style: normal; }
 .nav span { font-size: 9px; font-weight: 700; letter-spacing: 0.4px; }
 .nav.active { color: var(--text-primary); }
 .nav:not(.play).active { background: rgba(255,255,255,0.08); }
-.nav:active { transform: scale(0.92); }
 
 .nav.play {
   overflow: visible;
@@ -527,7 +631,6 @@ body[data-theme="light"] .play-inner {
   background: var(--primary);
   box-shadow: 0 8px 30px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.3);
 }
-.nav.play:active .play-inner { transform: scale(0.9); }
 
 /* ============================================================
    TOAST

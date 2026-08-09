@@ -1,0 +1,50 @@
+seed: 42
+device: auto
+
+data:
+  manifest: data/manifest.csv
+  window_frames: 96
+  target_fps: 30
+  min_visible_ratio: 0.55
+  visibility_threshold: 0.5
+  exercise_classes:
+    - squat
+    - pushup
+    - jumping_jack
+    - plank
+  form_classes:
+    - incorrect
+    - correct
+  augment:
+    enabled: true
+    mirror_probability: 0.5
+    noise_std: 0.008
+    time_warp_range: [0.9, 1.1]
+
+model:
+  type: transformer
+  hidden_dim: 192
+  layers: 4
+  heads: 6
+  dropout: 0.2
+
+training:
+  epochs: 80
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  exercise_loss_weight: 1.0
+  form_loss_weight: 1.0
+  class_weighting: balanced
+  label_smoothing: 0.05
+  grad_clip_norm: 1.0
+  patience: 12
+  num_workers: 0
+  output_dir: runs/baseline
+
+inference:
+  confidence_threshold: 0.70
+  form_confidence_threshold: 0.65
+  smoothing_alpha: 0.25
+  stride_frames: 4
+  min_valid_frames: 0.70

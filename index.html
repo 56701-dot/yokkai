@@ -5,14 +5,9 @@
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#000000">
-  <meta name="description" content="Fit Quest — Liquid Glass Gaming HUD" />
-  <title>Fit Quest — Liquid Glass</title>
-
-  <!-- Google Fonts: Inter (Clean iOS readability) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="description" content="Fit Quest — a focused fitness adventure." />
+  <title>Fit Quest</title>
 
   <!-- Stylesheets -->
   <link href="css/style.css" rel="stylesheet" />
@@ -20,9 +15,11 @@
   <link href="css/gear.css" rel="stylesheet" />
   <link href="css/quest.css" rel="stylesheet" />
   <link href="css/setting.css" rel="stylesheet" />
+  <link href="css/apple.css" rel="stylesheet" />
+  <link href="css/morphic.css" rel="stylesheet" />
 </head>
 
-<body>
+<body data-theme="light">
 
   <!-- Liquid Glass Ambient Background -->
   <div class="ambient-background" aria-hidden="true">
@@ -44,14 +41,30 @@
   <main class="screen active" id="login-screen" aria-label="Login Screen">
     <div class="login-content">
       <div class="login-header">
+        <span class="eyebrow">FIT QUEST</span>
         <h1>Fit Quest</h1>
-        <p>LEVEL UP YOUR FITNESS</p>
+        <p>Turn every workout into progress.</p>
       </div>
 
-      <div class="input-group">
-        <input class="input-glass" id="username-input" placeholder="Username" type="text" aria-label="Username" autocomplete="username" />
+      <div class="auth-mode-toggle" role="tablist" aria-label="Authentication mode">
+        <button class="auth-mode active" id="login-mode-btn" type="button" role="tab" aria-selected="true" data-auth-mode="login">Login</button>
+        <button class="auth-mode" id="register-mode-btn" type="button" role="tab" aria-selected="false" data-auth-mode="register">Register</button>
+      </div>
+
+      <div class="input-group" data-auth-mode="login">
+        <input class="input-glass" id="username-input" placeholder="Email or username" type="text" aria-label="Email or username" autocomplete="username" />
+        <input class="input-glass signup-only" id="signup-username-input" placeholder="Username" type="text" aria-label="Username for signup" autocomplete="username" />
         <input class="input-glass" id="password-input" placeholder="Password" type="password" aria-label="Password" autocomplete="current-password" />
-        <button class="btn btn-primary" id="login-btn" onclick="playGame()" aria-label="เข้าสู่ระบบ">INITIALIZE</button>
+        <input class="input-glass signup-only" id="confirm-password-input" placeholder="Confirm password" type="password" aria-label="Confirm password" autocomplete="new-password" />
+        <button class="auth-link login-only" id="forgot-password-btn" type="button">Forgot password?</button>
+        <input class="input-glass reset-only" id="reset-identifier-input" placeholder="Email or phone (+66...)" type="text" aria-label="Email or phone for password reset" autocomplete="username" />
+        <input class="input-glass reset-phone-only" id="reset-code-input" placeholder="SMS code" type="text" aria-label="SMS reset code" inputmode="numeric" autocomplete="one-time-code" />
+        <input class="input-glass reset-new-password-only" id="reset-password-input" placeholder="New password" type="password" aria-label="New password" autocomplete="new-password" />
+        <button class="btn btn-primary" id="login-btn" onclick="playGame()" aria-label="Sign in">Continue</button>
+        <button class="btn btn-primary signup-only" id="register-btn" type="button">CREATE ACCOUNT</button>
+        <button class="btn btn-primary reset-only" id="reset-request-btn" type="button">Send reset link</button>
+        <button class="btn btn-primary reset-phone-only" id="reset-confirm-btn" type="button">Update password</button>
+        <button class="auth-link reset-only" id="back-login-btn" type="button">Back to login</button>
       </div>
 
       <div class="divider"><span>OR</span></div>
@@ -73,16 +86,103 @@
 
     <!-- Top Bar (Glass) -->
     <header class="topbar">
-      <div class="avatar"><img alt="Avatar" src="assets/men_avartar.png" /></div>
-      <div class="top-meta"><div class="hello">READY FOR ACTION</div></div>
-      <div class="wallet"><span>💰</span><span id="coinCount">9,999</span></div>
+      <button class="profile-trigger" id="profileTrigger" type="button" aria-label="Open profile">
+        <span class="avatar"><img alt="Avatar" src="assets/men_avartar.png" /></span>
+        <span class="top-meta">
+          <span class="top-brand">Fit Quest</span>
+          <span class="hello">Ready for today</span>
+        </span>
+      </button>
+      <div class="wallet" aria-label="Coin balance">
+        <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"></circle><path d="M10 5.5v9M12.2 7.3c-.5-.5-1.2-.8-2.2-.8-1.3 0-2.2.7-2.2 1.7 0 2.7 4.5 1.2 4.5 3.5 0 1-.9 1.8-2.4 1.8-.9 0-1.8-.3-2.4-.9"></path></svg>
+        <span id="coinCount">0</span>
+      </div>
     </header>
+
+    <div class="profile-sheet" id="profileSheet" aria-hidden="true">
+      <button class="profile-scrim" id="profileSheetClose" type="button" aria-label="Close profile"></button>
+      <section class="profile-panel glass-card" role="dialog" aria-modal="true" aria-labelledby="profileSheetTitle">
+        <div class="profile-panel-head">
+          <div class="profile-panel-avatar"><img alt="Avatar" src="assets/men.png" /></div>
+          <div>
+            <p class="profile-panel-kicker">CHARACTER</p>
+            <h2 id="profileSheetTitle">Player One</h2>
+            <p class="sub">Level 1 &middot; Warrior</p>
+          </div>
+          <button class="profile-close" id="profileCloseButton" type="button" aria-label="Close profile">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+
+        <div class="status-card">
+          <div class="status-head">
+            <div>
+              <div class="row-title">Character Status</div>
+              <div class="row-note">Earn 4 stat points each time you level up</div>
+            </div>
+            <span class="status-cost" id="statPointsBadge">POINTS 0</span>
+          </div>
+          <div class="status-grid" id="statusGrid">
+            <div class="status-row" data-stat-row="maxHp">
+              <span class="status-label">HP</span>
+              <strong class="status-value">100</strong>
+              <button class="status-upgrade" type="button" data-upgrade-stat="maxHp" aria-label="Upgrade HP">+</button>
+            </div>
+            <div class="status-row" data-stat-row="attack">
+              <span class="status-label">ATK</span>
+              <strong class="status-value">10</strong>
+              <button class="status-upgrade" type="button" data-upgrade-stat="attack" aria-label="Upgrade ATK">+</button>
+            </div>
+            <div class="status-row" data-stat-row="defense">
+              <span class="status-label">DEF</span>
+              <strong class="status-value">5</strong>
+              <button class="status-upgrade" type="button" data-upgrade-stat="defense" aria-label="Upgrade DEF">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="pose-trainer" id="poseTrainer" aria-hidden="true">
+      <div class="pose-stage">
+        <video class="pose-video" id="poseVideo" playsinline muted></video>
+        <canvas class="pose-canvas" id="poseCanvas"></canvas>
+        <div class="pose-shade" aria-hidden="true"></div>
+      </div>
+      <div class="pose-hud">
+        <div class="pose-hud-top">
+          <div>
+            <span class="pose-kicker">BLAZEPOSE</span>
+            <h2 id="poseQuestTitle">Quest</h2>
+          </div>
+          <button class="pose-close" id="poseCloseButton" type="button" aria-label="Stop camera">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <div class="pose-metrics">
+          <div class="pose-metric">
+            <span>REPS</span>
+            <strong id="poseRepCount">0</strong>
+          </div>
+          <div class="pose-metric">
+            <span>FORM</span>
+            <strong id="poseFormScore">--</strong>
+          </div>
+          <div class="pose-metric">
+            <span>TARGET</span>
+            <strong id="poseTargetCount">0</strong>
+          </div>
+        </div>
+        <p class="pose-feedback" id="poseFeedback">Align your full body in frame.</p>
+        <button class="btn btn-primary pose-finish" id="poseFinishButton" type="button">FINISH QUEST</button>
+      </div>
+    </section>
 
     <!-- Level Strip -->
     <div class="level-strip">
-      <span class="level-chip">LV. 67</span>
-      <span class="level-track"><span class="level-fill" style="width: 72%"></span></span>
-      <span class="level-text">780 / 1080 XP</span>
+      <span class="level-chip">LV. 1</span>
+      <span class="level-track"><span class="level-fill" style="width: 0%"></span></span>
+      <span class="level-text">0 / 100 XP</span>
     </div>
 
     <!-- Views Content -->
@@ -90,21 +190,150 @@
 
       <!-- VIEW: PLAY / Adventure -->
       <div class="view active" id="view-play">
-        <div class="section-head">
-          <h1>Adventure</h1>
-          <p class="sub">Daily fitness missions</p>
-        </div>
-        <div class="stats stagger-in">
-          <div class="stat glass-card">
-            <span class="sub">HP (Health)</span>
-            <strong>100%</strong>
-            <div class="meter"><span style="width:100%; background: var(--success);"></span></div>
-          </div>
-          <div class="stat glass-card">
-            <span class="sub">EXP Today</span>
-            <strong>780</strong>
-            <div class="meter"><span style="width:72%; background: var(--primary);"></span></div>
-          </div>
+        <div class="play-story" id="playStory">
+          <section class="story-home" id="storyHome" aria-label="โหมดเนื้อเรื่อง">
+            <div class="story-pill">โหมดการเล่นหลัก</div>
+            <button class="story-card" id="openStoryMap" type="button" aria-label="เข้าสู่โหมดเนื้อเรื่อง">
+              <span class="story-card-curve" aria-hidden="true">
+                <svg viewBox="0 0 120 128" preserveAspectRatio="none">
+                  <path class="story-card-curve-outer" d="M 60,0 C 80,30 100,40 100,64 C 100,88 80,98 60,128"></path>
+                  <path class="story-card-curve-inner" d="M 60,0 C 80,30 100,40 100,64 C 100,88 80,98 60,128"></path>
+                  <g class="story-card-mini-node" transform="translate(75 20)">
+                    <circle r="12"></circle>
+                    <path class="story-card-mini-lock-body" d="M-5 -1.5h10v8h-10z"></path>
+                    <path class="story-card-mini-lock-shackle" d="M-3 -1.5v-3.2c0-2 1.3-3.5 3-3.5s3 1.5 3 3.5v3.2"></path>
+                  </g>
+                  <g class="story-card-mini-node story-card-mini-number" transform="translate(100 64)">
+                    <circle r="14"></circle>
+                    <text id="storyCardCurrentLevel" y="5">1</text>
+                  </g>
+                  <g class="story-card-mini-node" transform="translate(75 108)">
+                    <circle r="12"></circle>
+                    <path class="story-card-mini-check" d="M-5 0.5 L-1.4 4 L6 -4"></path>
+                  </g>
+                </svg>
+              </span>
+              <span class="story-card-copy">
+                <span class="story-card-kicker">STORY MODE</span>
+                <strong>โหมดเนื้อเรื่อง</strong>
+                <small>เริ่มจากด่าน 1 เก็บ XP แล้วปลดล็อกโลกใหม่</small>
+              </span>
+              <span class="story-play-button" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"></path></svg>
+              </span>
+            </button>
+
+            <button class="story-card raid-card" id="openInfiniteRaid" type="button" aria-label="เข้าสู่ Infinite Raid">
+              <span class="raid-card-depth" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+              <span class="story-card-copy">
+                <span class="story-card-kicker">INFINITE RAID</span>
+                <strong>ลงดันไม่สิ้นสุด</strong>
+                <small>ไต่ชั้นลึกขึ้นเรื่อย ๆ ศัตรูยากขึ้น รางวัลสูงขึ้น</small>
+              </span>
+              <span class="story-play-button" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"></path></svg>
+              </span>
+            </button>
+
+            <div class="story-stats stats stagger-in">
+              <div class="stat glass-card">
+                <span class="sub">HP (Health)</span>
+                <strong>100%</strong>
+                <div class="meter"><span style="width:100%; background: var(--success);"></span></div>
+              </div>
+              <div class="stat glass-card">
+                <span class="sub">EXP Today</span>
+                <strong>0</strong>
+                <div class="meter"><span style="width:0%; background: var(--primary);"></span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="story-map" id="storyMap" aria-label="แผนที่โหมดเนื้อเรื่อง" hidden>
+            <div class="story-map-sticky">
+              <div class="story-map-head">
+                <button class="story-back" id="backStoryHome" type="button" aria-label="กลับหน้าโหมด">
+                  <svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"></path></svg>
+                </button>
+                <div class="story-title-pill">
+                  <span id="storyWorldIcon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 21V10"></path>
+                      <path d="M12 11C7 11 5 8 5 4c4 0 7 2 7 7z"></path>
+                      <path d="M12 13c5 0 7-3 7-7-4 0-7 2-7 7z"></path>
+                    </svg>
+                  </span>
+                  <strong id="storyWorldTitle">ทุ่งเริ่มต้น</strong>
+                </div>
+              </div>
+              <div class="story-progress-pill" id="storyProgressText">โลกที่ 1/20 · ด่าน 1/100</div>
+              </div>
+
+              <div class="story-road-map" id="storyRoadMap">
+              <svg class="story-road-svg" id="storyRoadSvg" viewBox="0 0 240 11240" aria-hidden="true" preserveAspectRatio="none">
+                <path class="story-road-shadow" id="storyRoadShadow" d=""></path>
+                <path class="story-road-line" id="storyRoadLine" d=""></path>
+                <path class="story-road-center" id="storyRoadCenter" d=""></path>
+              </svg>
+              <div class="story-stage-layer" id="storyStageLayer"></div>
+              <img class="story-avatar" id="storyAvatar" src="assets/men_avartar.png" alt="Player avatar" />
+            </div>
+
+            <button class="story-current-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+              กลับไปด่านปัจจุบัน
+            </button>
+          </section>
+
+          <section class="raid-screen" id="raidScreen" aria-label="Infinite Raid" hidden>
+            <div class="raid-sticky">
+              <button class="story-back" id="backRaidHome" type="button" aria-label="กลับหน้าโหมด">
+                <svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"></path></svg>
+              </button>
+              <div>
+                <span>INFINITE RAID</span>
+                <strong>ลงดันไม่สิ้นสุด</strong>
+              </div>
+            </div>
+
+            <div class="raid-hero">
+              <div class="raid-rings" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <img class="raid-avatar" src="assets/men_avartar.png" alt="Player avatar" />
+              <p class="raid-eyebrow" id="raidFloorText">ชั้นที่ 1</p>
+              <h2>Raid deeper. Earn more.</h2>
+              <p id="raidThreatText">ภัยคุกคามระดับเริ่มต้น · รางวัลพื้นฐาน</p>
+            </div>
+
+            <div class="raid-grid">
+              <div class="raid-stat">
+                <span>Current floor</span>
+                <strong id="raidCurrentFloor">1</strong>
+              </div>
+              <div class="raid-stat">
+                <span>Reward bonus</span>
+                <strong id="raidRewardBonus">x1.0</strong>
+              </div>
+              <div class="raid-stat">
+                <span>Threat</span>
+                <strong id="raidThreatLevel">Low</strong>
+              </div>
+            </div>
+
+            <div class="raid-challenge-list" id="raidChallengeList" aria-label="Raid movement challenges"></div>
+
+            <div class="raid-actions">
+              <button class="raid-primary" id="startRaidRun" type="button">เริ่ม Raid ชั้นนี้</button>
+              <button class="raid-secondary" id="raidNextFloor" type="button">จำลองผ่าน 1 ชั้น</button>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -138,8 +367,8 @@
       <!-- VIEW: QUEST -->
       <div class="view" id="view-quest">
         <div class="section-head">
-          <h1>Daily Quest</h1>
-          <p class="sub">Complete tasks for rewards</p>
+          <h1>Monster Quest</h1>
+          <p class="sub">Choose a monster, clear the movement quest, earn EXP</p>
         </div>
         <div class="quest-list stagger-in" id="questList"></div>
       </div>
@@ -152,13 +381,13 @@
         </div>
         <div class="settings stagger-in">
           <!-- Profile Card -->
-          <div class="glass-card profile-card">
+          <button class="glass-card profile-card profile-card-button" type="button" id="settingsProfileButton" aria-label="Open profile">
             <div class="avatar"><img alt="Avatar" src="assets/men.png" /></div>
             <div>
               <h2 style="margin:0;">Player One</h2>
               <p class="sub" style="margin:0;">Level 67 &middot; Warrior</p>
             </div>
-          </div>
+          </button>
 
           <!-- Appearance Settings -->
           <div class="group glass-card">
@@ -174,6 +403,16 @@
                 <button class="theme-option" type="button" data-theme-choice="light" aria-pressed="false">
                   <span>Light</span>
                 </button>
+              </div>
+            </div>
+            <div class="row transparency-row">
+              <div>
+                <div class="row-title">Transparency</div>
+                <div class="row-note">Glass strength</div>
+              </div>
+              <div class="transparency-control">
+                <input id="glassTransparency" max="90" min="35" type="range" value="58" aria-label="Glass transparency" />
+                <span id="glassTransparencyValue">58%</span>
               </div>
             </div>
           </div>
@@ -212,13 +451,14 @@
 
     <!-- Bottom Navigation (Heavy Glass) -->
     <nav class="bottom-nav" aria-label="Main Navigation">
-      <button class="nav" data-view="shop" aria-label="Shop"><i>🛒</i><span>SHOP</span></button>
-      <button class="nav" data-view="equipment" aria-label="Equipment"><i>🎒</i><span>GEAR</span></button>
+      <button class="nav" data-view="shop" aria-label="Shop"><i><svg viewBox="0 0 24 24"><path d="M3 5h2l2.2 10h10.9l2-7H7"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg></i><span>SHOP</span></button>
+      <button class="nav" data-view="equipment" aria-label="Equipment"><i><svg viewBox="0 0 24 24"><path d="M7 7.5V6a5 5 0 0 1 10 0v1.5M5 8h14l1 12H4z"></path></svg></i><span>GEAR</span></button>
       <button class="nav play active" data-view="play" aria-label="Play">
-        <div class="play-inner"><i>⚔️</i></div>
+        <div class="play-inner"><i><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"></path></svg></i></div>
+        <span>PLAY</span>
       </button>
-      <button class="nav" data-view="quest" aria-label="Quest"><i>📜</i><span>QUEST</span></button>
-      <button class="nav" data-view="setting" aria-label="Settings"><i>⚙️</i><span>SET</span></button>
+      <button class="nav" data-view="quest" aria-label="Quest"><i><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-3-6 3z"></path><path d="M9 8h6M9 12h6"></path></svg></i><span>QUEST</span></button>
+      <button class="nav" data-view="setting" aria-label="Settings"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8 8 0 0 0 15 6.2L14.7 4h-4l-.3 2.2A8 8 0 0 0 8.8 7L6.5 6.1l-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9a8 8 0 0 0 1.6.8l.3 2.2h4l.3-2.2a8 8 0 0 0 1.6-.8l2.3.9 2-3.4-2-1.5a7 7 0 0 0 .1-1z"></path></svg></i><span>SET</span></button>
     </nav>
 
     <!-- Toast Notification -->
@@ -226,8 +466,11 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
   <script src="js/supabase-config.js"></script>
-  <script src="js/script.js"></script>
+  <script src="js/script.js?v=raid-reach-4"></script>
   <script src="js/supabase-auth.js"></script>
 </body>
 </html>

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fitquest-pose-biomech"
+version = "0.1.0"
+description = "Biomechanics-first exercise classification and form assessment from BlazePose landmarks"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "PyYAML>=6.0",
+  "torch>=2.2",
+  "scikit-learn>=1.4",
+  "opencv-python-headless>=4.9",
+  "mediapipe>=0.10.14",
+]
+
+[project.optional-dependencies]
+serve = ["fastapi>=0.110", "uvicorn[standard]>=0.27"]
+dev = ["pytest>=8.0", "ruff>=0.3"]
+
+[project.scripts]
+pose-biomech = "pose_biomech.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pose_biomech*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

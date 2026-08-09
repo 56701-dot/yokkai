@@ -1,12 +1,64 @@
 /* ============================================================
    QUEST — Liquid Glass iOS
    ============================================================ */
-.quest-list { display: grid; gap: 16px; }
+.quest-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+  gap: 14px;
+}
 
 .quest-card {
   background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
   padding: 20px; position: relative; overflow: hidden;
+}
+
+.monster-pick {
+  display: grid;
+  grid-template-columns: 58px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.monster-orb {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,0.72), transparent 0 10%, transparent 28%),
+    linear-gradient(145deg, #6ee7b7, #14b8a6);
+  box-shadow: inset 0 -10px 22px rgba(0, 0, 0, 0.18), 0 10px 22px rgba(8, 20, 30, 0.14);
+}
+
+.monster-orb span {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+}
+
+.monster-orb.bat { background: linear-gradient(145deg, #8b5cf6, #334155); }
+.monster-orb.rat { background: linear-gradient(145deg, #94a3b8, #475569); }
+.monster-orb.crawler { background: linear-gradient(145deg, #22c55e, #365314); }
+.monster-orb.imp { background: linear-gradient(145deg, #67e8f9, #2563eb); }
+.monster-orb.stone { background: linear-gradient(145deg, #cbd5e1, #64748b); }
+.monster-orb.bug { background: linear-gradient(145deg, #facc15, #a16207); }
+.monster-orb.turtle { background: linear-gradient(145deg, #86efac, #15803d); }
+
+.monster-info {
+  min-width: 0;
+}
+
+.monster-info h2 {
+  margin: 6px 0 0;
+  font-size: 19px;
+  line-height: 1.1;
+  letter-spacing: 0;
 }
 
 .badge {
@@ -15,6 +67,28 @@
   padding: 4px 8px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
 }
 .badge.exp { background: rgba(52, 199, 89, 0.15); color: var(--success); }
+
+.quest-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -2px 0 12px;
+}
+
+.quest-meta span {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
 
 .step {
   display: flex; justify-content: space-between; align-items: center;
@@ -34,6 +108,10 @@ body[data-theme="light"] .quest-card {
   box-shadow: var(--glass-shadow);
 }
 
+body[data-theme="light"] .monster-orb {
+  border-color: rgba(73, 100, 126, 0.12);
+}
+
 body[data-theme="light"] .badge {
   background: rgba(11, 132, 255, 0.08);
   color: rgba(24, 52, 83, 0.7);
@@ -44,10 +122,170 @@ body[data-theme="light"] .badge.exp {
   color: #14814b;
 }
 
+body[data-theme="light"] .quest-meta span {
+  border-color: rgba(73, 100, 126, 0.1);
+  background: rgba(52, 82, 112, 0.06);
+}
+
 body[data-theme="light"] .step {
   border-bottom-color: rgba(73, 100, 126, 0.1);
 }
 
 body[data-theme="light"] .quest-card .btn-primary:disabled {
   background: rgba(52, 82, 112, 0.08);
+}
+
+.pose-trainer {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  background: #05070b;
+  color: #fff;
+}
+
+.pose-trainer.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.pose-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.pose-video,
+.pose-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.pose-video {
+  opacity: 0;
+}
+
+.pose-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 11, 0.86), transparent 28%),
+    linear-gradient(0deg, rgba(5, 7, 11, 0.94), transparent 44%);
+  pointer-events: none;
+}
+
+.pose-hud {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 18px 22px;
+}
+
+.pose-hud-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pose-kicker {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.pose-hud h2 {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.pose-close {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.pose-close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.pose-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: auto;
+}
+
+.pose-metric {
+  min-height: 72px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-md);
+  background: rgba(10, 14, 22, 0.58);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.pose-metric span {
+  display: block;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.pose-metric strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+.pose-feedback {
+  min-height: 42px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-md);
+  background: rgba(10, 14, 22, 0.62);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.pose-feedback[data-state="good"] {
+  color: #9fffc4;
+}
+
+.pose-feedback[data-state="warn"] {
+  color: #ffd18a;
+}
+
+.pose-finish {
+  width: 100%;
 }

@@ -16,7 +16,17 @@ Open `supabase/schema.sql`, copy the whole file, then run it in:
 
 `Supabase Dashboard > SQL Editor`
 
-This creates `public.profiles`, enables RLS, and creates a profile automatically when a user signs up.
+This creates the first playable data model:
+
+- `public.profiles` for player identity and starter stats.
+- `public.quests` for main, side, daily, and story quest templates.
+- `public.quest_sessions` for each workout/game attempt.
+- `public.daily_activity` for fast dashboard summaries.
+- `public.difficulty_adjustments` for DDA decisions and audit history.
+- `public.inventory_items` for shop items.
+- `public.player_inventory` for items owned by each player.
+
+It enables RLS on all app tables, adds the grants needed for Supabase Data API access, seeds starter quests/items, and creates a profile automatically when a user signs up.
 
 It also adds username support:
 
@@ -24,6 +34,23 @@ It also adds username support:
 - Usernames must be 3-24 characters.
 - Allowed characters are lowercase letters, numbers, and underscore.
 - The app can log in with either email or username.
+
+Level progression grants stat points:
+
+- Every level gained adds 4 `profiles.stat_points`.
+- Stat upgrades spend 1 point each.
+- Upgradeable stats are HP, ATK, and DEF.
+
+It also adds these RPC helpers for the app to call later:
+
+- `start_quest_session(target_quest_id)`
+- `complete_quest_session(target_session_id, reps_done_value, valid_reps_value, duration_seconds_value, form_score_value)`
+- `buy_inventory_item(target_item_id)`
+- `upgrade_player_stat(target_stat)`
+- `get_adjusted_quests()`
+- `calculate_dda_for_quest(target_quest_id)`
+
+DDA starts after 3 completed sessions for the same exercise type. It adjusts the next target by -20%, -10%, 0%, +10%, or +20% using completion ratio and form score.
 
 ## 3. Enable email login
 

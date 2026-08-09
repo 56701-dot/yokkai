@@ -1,0 +1,4 @@
+sample_id,landmarks_path,source_video_path,trainer_id,exercise_label,form_label,error_tags,split,start_sec,end_sec,fps
+sq_001_rep01,landmarks/sq_001_rep01.npz,videos/squat/trainer_a/clip_001.mp4,trainer_a,squat,correct,,train,2.10,5.30,30
+sq_002_rep03,landmarks/sq_002_rep03.npz,videos/squat/trainer_b/clip_002.mp4,trainer_b,squat,incorrect,knee_valgus|shallow_depth,val,8.20,11.40,30
+pu_010_rep02,landmarks/pu_010_rep02.npz,videos/pushup/trainer_c/clip_010.mp4,trainer_c,pushup,correct,,test,4.00,6.80,30

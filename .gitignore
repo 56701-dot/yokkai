@@ -1,11 +1,25 @@
 node_modules/
+.next/
+.pnpm-store/
 logs/
+
+# Pose biomechanics training artifacts and licensed/raw datasets
+biomechanics_ai/data/videos/
+biomechanics_ai/data/landmarks/
+biomechanics_ai/runs/
+biomechanics_ai/*.pt
+biomechanics_ai/*.onnx
+biomechanics_ai/.venv/
+biomechanics_ai/.pytest_cache/
+biomechanics_ai/**/__pycache__/
 
 .env
 .env.*
 !.env.example
 
 .agents/
+.tools/
+*.tsbuildinfo
 
 Thumbs.db
 .DS_Store

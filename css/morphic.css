@@ -1,0 +1,1015 @@
+/* Fit Quest morphic presentation layer.
+   The Apple tokens from desing.md stay authoritative; each material has one job. */
+:root {
+  --fq-canvas: #f5f5f7;
+  --fq-surface: #ffffff;
+  --fq-surface-soft: #fafafc;
+  --fq-ink: #1d1d1f;
+  --fq-muted: #6e6e73;
+  --fq-hairline: rgba(29, 29, 31, 0.1);
+  --fq-blue: #0066cc;
+  --fq-blue-focus: #0071e3;
+  --fq-blue-soft: rgba(0, 102, 204, 0.1);
+  --fq-glass: var(--glass-bg, rgba(255, 255, 255, 0.68));
+  --fq-glass-strong: var(--glass-panel-bg, rgba(255, 255, 255, 0.82));
+  --fq-glass-line: rgba(255, 255, 255, 0.84);
+  --fq-neu-raised: -7px -7px 18px rgba(255, 255, 255, 0.92), 7px 7px 18px rgba(33, 43, 54, 0.09);
+  --fq-neu-pressed: inset 3px 3px 8px rgba(45, 55, 68, 0.11), inset -3px -3px 8px rgba(255, 255, 255, 0.9);
+  --fq-clay: 0 7px 0 #0052a3, 0 13px 24px rgba(0, 102, 204, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.32);
+  --fq-glass-blur: saturate(180%) blur(24px);
+}
+
+body[data-theme="dark"] {
+  --fq-canvas: #000000;
+  --fq-surface: #272729;
+  --fq-surface-soft: #2a2a2c;
+  --fq-ink: #ffffff;
+  --fq-muted: #cccccc;
+  --fq-hairline: rgba(255, 255, 255, 0.14);
+  --fq-blue: #2997ff;
+  --fq-blue-focus: #2997ff;
+  --fq-blue-soft: rgba(41, 151, 255, 0.14);
+  --fq-glass: var(--glass-bg, rgba(30, 30, 32, 0.64));
+  --fq-glass-strong: var(--glass-panel-bg, rgba(39, 39, 41, 0.78));
+  --fq-glass-line: rgba(255, 255, 255, 0.15);
+  --fq-neu-raised: -6px -6px 16px rgba(255, 255, 255, 0.035), 8px 8px 20px rgba(0, 0, 0, 0.42);
+  --fq-neu-pressed: inset 3px 3px 9px rgba(0, 0, 0, 0.52), inset -2px -2px 7px rgba(255, 255, 255, 0.05);
+  --fq-clay: 0 7px 0 #0b5ea7, 0 14px 28px rgba(41, 151, 255, 0.18), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+html,
+body {
+  background: var(--fq-canvas);
+  color: var(--fq-ink);
+  font-family: "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 17px;
+}
+
+/* Keep the Apple cadence without viewport-scaled type or compressed tracking. */
+*,
+*::before,
+*::after {
+  letter-spacing: 0 !important;
+}
+
+body,
+body[data-theme="light"],
+body[data-theme="dark"] {
+  background: var(--fq-canvas);
+}
+
+.ambient-background,
+.orb {
+  display: none;
+}
+
+.screen,
+body[data-theme="light"] .screen,
+body[data-theme="dark"] .screen {
+  isolation: isolate;
+  max-width: 430px;
+  background: var(--fq-canvas);
+  color: var(--fq-ink);
+}
+
+@media (min-width: 431px) {
+  .screen {
+    border-color: var(--fq-hairline);
+  }
+}
+
+button,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--fq-blue-focus);
+  outline-offset: 3px;
+}
+
+/* Minimal typography and canvas rhythm. */
+.content {
+  padding: 32px 20px 118px;
+  background: transparent;
+}
+
+.section-head {
+  margin-bottom: 24px;
+}
+
+.section-head h1 {
+  color: var(--fq-ink);
+  font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.section-head .sub,
+.sub {
+  color: var(--fq-muted);
+  font-size: 15px;
+  line-height: 1.42;
+}
+
+/* Liquid glass belongs to navigation and transient interface layers. */
+.topbar,
+body[data-theme="light"] .topbar,
+body[data-theme="dark"] .topbar {
+  position: relative;
+  min-height: 58px;
+  background: rgba(0, 0, 0, var(--glass-hover-alpha, 0.76));
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow: none;
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.topbar::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+
+.topbar .avatar {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.wallet,
+body[data-theme="light"] .wallet,
+body[data-theme="dark"] .wallet {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.level-strip,
+body[data-theme="light"] .level-strip,
+body[data-theme="dark"] .level-strip {
+  background: var(--fq-glass);
+  border-bottom: 1px solid var(--fq-glass-line);
+  box-shadow: none;
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.level-chip {
+  background: var(--fq-blue);
+  box-shadow: 0 3px 0 rgba(0, 65, 132, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.level-track,
+body[data-theme="light"] .level-track,
+body[data-theme="dark"] .level-track {
+  height: 7px;
+  padding: 1px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fq-canvas) 78%, #8a8a8f);
+  border: 1px solid var(--fq-hairline);
+  border-radius: 9999px;
+  box-shadow: var(--fq-neu-pressed);
+}
+
+.level-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--fq-blue);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+/* Shared glass material. The specular edge creates liquid refraction. */
+.glass-card,
+.item-card,
+.quest-card,
+.group,
+.equip-stage,
+.profile-panel {
+  background: var(--fq-glass);
+  border: 1px solid var(--fq-glass-line);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(29, 29, 31, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+body[data-theme="dark"] .glass-card,
+body[data-theme="dark"] .item-card,
+body[data-theme="dark"] .quest-card,
+body[data-theme="dark"] .group,
+body[data-theme="dark"] .equip-stage,
+body[data-theme="dark"] .profile-panel {
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-card::before,
+.item-card::before,
+.quest-card::before,
+.group::before,
+.equip-stage::before,
+.profile-panel::before,
+.bottom-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 42%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0));
+  opacity: 0.64;
+  pointer-events: none;
+}
+
+body[data-theme="dark"] .glass-card::before,
+body[data-theme="dark"] .item-card::before,
+body[data-theme="dark"] .quest-card::before,
+body[data-theme="dark"] .group::before,
+body[data-theme="dark"] .equip-stage::before,
+body[data-theme="dark"] .profile-panel::before,
+body[data-theme="dark"] .bottom-nav::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+}
+
+/* Skeuomorphic inputs and switches use familiar physical affordances. */
+.input-glass,
+body[data-theme="light"] .input-glass,
+body[data-theme="dark"] .input-glass {
+  min-height: 50px;
+  background: var(--fq-surface-soft);
+  color: var(--fq-ink);
+  border: 1px solid var(--fq-hairline);
+  border-radius: 11px;
+  box-shadow: var(--fq-neu-pressed);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.input-glass:focus {
+  border-color: var(--fq-blue-focus);
+  box-shadow: var(--fq-neu-pressed), 0 0 0 3px var(--fq-blue-soft);
+}
+
+.ios-switch,
+body[data-theme="light"] .ios-switch,
+body[data-theme="dark"] .ios-switch {
+  border: 1px solid var(--fq-hairline);
+  background: color-mix(in srgb, var(--fq-canvas) 84%, #77777c);
+  box-shadow: var(--fq-neu-pressed);
+}
+
+.ios-switch.on,
+body[data-theme="light"] .ios-switch.on,
+body[data-theme="dark"] .ios-switch.on {
+  background: var(--fq-blue);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.ios-switch span {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+input[type="range"],
+body[data-theme="light"] input[type="range"],
+body[data-theme="dark"] input[type="range"] {
+  background: color-mix(in srgb, var(--fq-canvas) 80%, #77777c);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: var(--fq-neu-pressed);
+}
+
+/* Clay controls are reserved for clear, high-value actions. */
+.btn-primary,
+.btn-primary:hover,
+.quest-card .btn-primary,
+.raid-primary,
+.story-play-button,
+.play-inner,
+body[data-theme="light"] .play-inner,
+body[data-theme="dark"] .play-inner {
+  background: var(--fq-blue);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--fq-clay);
+}
+
+.btn-primary:active,
+.quest-card .btn-primary:active,
+.raid-primary:active,
+.story-card:active .story-play-button,
+.nav.play:active .play-inner {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #0052a3, 0 7px 14px rgba(0, 102, 204, 0.16), inset 0 2px 0 rgba(255, 255, 255, 0.24);
+}
+
+.btn-glass,
+.raid-secondary {
+  background: var(--fq-glass);
+  color: var(--fq-blue);
+  border: 1px solid color-mix(in srgb, var(--fq-blue) 34%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+/* Neomorphic information panels stay quiet and scannable. */
+.story-stats .stat,
+.raid-stat,
+.status-row {
+  background: var(--fq-surface-soft);
+  border: 1px solid color-mix(in srgb, var(--fq-hairline) 74%, transparent);
+  box-shadow: var(--fq-neu-raised);
+}
+
+.story-stats .stat::before,
+.status-row::before {
+  display: none;
+}
+
+.meter {
+  padding: 1px;
+  overflow: hidden;
+  border: 1px solid var(--fq-hairline);
+  background: color-mix(in srgb, var(--fq-canvas) 80%, #77777c);
+  box-shadow: var(--fq-neu-pressed);
+}
+
+.meter > span {
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+/* Spatial UI: primary game surfaces have restrained depth and clear layers. */
+.story-home,
+.quest-list,
+.shop-grid,
+.settings {
+  perspective: 900px;
+}
+
+.story-card {
+  min-height: 172px;
+  border: 1px solid var(--fq-hairline);
+  border-radius: 18px;
+  background: var(--fq-surface);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.82), 0 16px 34px rgba(29, 29, 31, 0.08);
+  transform-style: preserve-3d;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.story-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 32%);
+  pointer-events: none;
+}
+
+.story-card-copy,
+.story-play-button,
+.story-card-curve,
+.raid-card-depth {
+  transform: translateZ(12px);
+}
+
+.story-card-copy strong {
+  max-width: 210px;
+  color: var(--fq-ink);
+  font-size: 34px;
+  line-height: 1.08;
+}
+
+.story-card-copy small {
+  color: var(--fq-muted);
+}
+
+.story-card-kicker,
+.story-pill {
+  color: var(--fq-blue);
+}
+
+.story-title-pill strong {
+  font-size: 24px;
+}
+
+.story-pill {
+  background: var(--fq-glass-strong);
+  border-color: color-mix(in srgb, var(--fq-blue) 28%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.raid-card,
+body[data-theme="light"] .raid-card,
+body[data-theme="dark"] .raid-card {
+  background: #1d1d1f;
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.raid-card::before {
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 34%);
+}
+
+.raid-card-depth span {
+  box-shadow: inset 0 0 18px rgba(41, 151, 255, 0.09);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .story-card:hover,
+  .quest-card:hover,
+  .item-card:hover,
+  .equip-stage:hover {
+    transform: translateY(-8px) rotateX(1.2deg);
+  }
+
+  .item-card:hover,
+  .quest-card:hover,
+  .equip-stage:hover {
+    border-color: color-mix(in srgb, var(--fq-blue) 28%, var(--fq-glass-line));
+    box-shadow: var(--fq-neu-raised), 0 20px 38px rgba(29, 29, 31, 0.13);
+  }
+
+  .item-card:hover .item-art {
+    transform: translateY(-3px) translateZ(8px);
+    box-shadow: var(--fq-neu-raised), 0 10px 18px rgba(29, 29, 31, 0.11);
+  }
+
+  .item-card:hover .btn-buy,
+  .quest-card:hover .btn-primary {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #0052a3, 0 9px 18px rgba(0, 113, 227, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  .quest-card:hover .monster-orb {
+    transform: translateZ(24px) translateY(-3px) scale(1.04);
+  }
+
+  .equip-stage:hover .player {
+    transform: translateX(-50%) translateZ(38px) translateY(-2px);
+  }
+
+  .slot:hover,
+  .inv-cell:not(.empty):hover {
+    transform: translateY(-3px) translateZ(8px);
+    border-color: color-mix(in srgb, var(--fq-blue) 48%, var(--fq-glass-line));
+    box-shadow: var(--fq-neu-raised), 0 9px 16px rgba(29, 29, 31, 0.13);
+  }
+
+  .story-card:hover {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.84), 0 22px 42px rgba(29, 29, 31, 0.12);
+  }
+}
+
+/* Shop: glass container, recessed product tray, tactile purchase control. */
+.shop-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.item-card {
+  min-width: 0;
+  padding: 14px;
+  transform-style: preserve-3d;
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.item-art,
+body[data-theme="light"] .item-art,
+body[data-theme="dark"] .item-art {
+  height: 98px;
+  background: var(--fq-surface-soft);
+  border: 1px solid var(--fq-hairline);
+  border-radius: 11px;
+  box-shadow: var(--fq-neu-pressed);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.item-art svg {
+  transform: translateZ(16px);
+  filter: drop-shadow(3px 5px 18px rgba(0, 0, 0, 0.18));
+}
+
+.item-name,
+.item-stat {
+  overflow-wrap: anywhere;
+}
+
+.btn-buy,
+body[data-theme="light"] .btn-buy,
+body[data-theme="dark"] .btn-buy {
+  background: var(--fq-blue);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 3px 0 #0052a3, inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.tab,
+body[data-theme="light"] .tab,
+body[data-theme="dark"] .tab {
+  background: var(--fq-glass);
+  color: var(--fq-muted);
+  border: 1px solid var(--fq-glass-line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.tab.active,
+body[data-theme="light"] .tab.active,
+body[data-theme="dark"] .tab.active {
+  background: var(--fq-ink);
+  color: var(--fq-canvas);
+  border-color: var(--fq-ink);
+  box-shadow: none;
+}
+
+/* Equipment reads as a shallow spatial workbench. */
+.equip-stage,
+body[data-theme="light"] .equip-stage,
+body[data-theme="dark"] .equip-stage {
+  height: 286px;
+  background: var(--fq-glass);
+  box-shadow: var(--fq-neu-pressed), 0 18px 34px rgba(29, 29, 31, 0.07);
+  perspective: 760px;
+  transform-style: preserve-3d;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.player {
+  transform: translateX(-50%) translateZ(30px);
+  transition: transform 0.22s ease;
+}
+
+.player-img,
+body[data-theme="light"] .player-img,
+body[data-theme="dark"] .player-img {
+  filter: drop-shadow(3px 8px 24px rgba(0, 0, 0, 0.22));
+}
+
+.slot,
+body[data-theme="light"] .slot,
+body[data-theme="dark"] .slot {
+  background: var(--fq-glass-strong);
+  border: 1px solid var(--fq-glass-line);
+  border-radius: 8px;
+  box-shadow: var(--fq-neu-raised);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.slot.equipped,
+body[data-theme="light"] .slot.equipped,
+body[data-theme="dark"] .slot.equipped {
+  border-color: var(--fq-blue);
+  background: var(--fq-blue-soft);
+  box-shadow: inset 0 0 0 1px var(--fq-blue), var(--fq-neu-raised);
+}
+
+.inv-cell,
+.inv-cell.empty,
+body[data-theme="light"] .inv-cell,
+body[data-theme="dark"] .inv-cell {
+  border-radius: 11px;
+  background: var(--fq-surface-soft);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: var(--fq-neu-raised);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.inv-cell.empty,
+body[data-theme="light"] .inv-cell.empty,
+body[data-theme="dark"] .inv-cell.empty {
+  box-shadow: var(--fq-neu-pressed);
+}
+
+/* Monster Quest: glass cards with clay characters and a single blue action. */
+.quest-list {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.quest-card {
+  padding: 18px;
+  transform-style: preserve-3d;
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.monster-pick {
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.monster-orb {
+  width: 64px;
+  height: 64px;
+  border: 2px solid rgba(255, 255, 255, 0.54);
+  box-shadow: 0 6px 0 rgba(30, 56, 70, 0.25), 0 13px 22px rgba(29, 29, 31, 0.16), inset 0 3px 0 rgba(255, 255, 255, 0.48), inset 0 -10px 18px rgba(0, 0, 0, 0.18);
+  transform: translateZ(20px);
+  transition: transform 0.22s ease;
+}
+
+.monster-orb.slime {
+  background-position: center 56%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.monster-orb.slime span {
+  display: none;
+}
+
+.monster-orb-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center 56%;
+}
+
+.monster-orb span {
+  font-size: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
+}
+
+.monster-info h2 {
+  color: var(--fq-ink);
+  font-size: 19px;
+  line-height: 1.15;
+}
+
+.badge,
+body[data-theme="light"] .badge,
+body[data-theme="dark"] .badge,
+.quest-meta span,
+body[data-theme="light"] .quest-meta span,
+body[data-theme="dark"] .quest-meta span {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--fq-surface-soft) 84%, #a1a1a6);
+  color: var(--fq-muted);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46);
+}
+
+.badge.exp,
+body[data-theme="light"] .badge.exp,
+body[data-theme="dark"] .badge.exp {
+  background: var(--fq-blue-soft);
+  color: var(--fq-blue);
+  border-color: color-mix(in srgb, var(--fq-blue) 22%, transparent);
+}
+
+.step,
+body[data-theme="light"] .step,
+body[data-theme="dark"] .step {
+  border-bottom-color: var(--fq-hairline);
+}
+
+.quest-card .btn-primary {
+  min-height: 44px;
+  margin-top: 18px;
+}
+
+/* Settings use glass groups with inset rows and physical controls. */
+.profile-card {
+  background: var(--fq-glass);
+}
+
+.group {
+  padding: 5px;
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+  border-bottom-color: var(--fq-hairline);
+}
+
+.theme-toggle,
+body[data-theme="light"] .theme-toggle,
+body[data-theme="dark"] .theme-toggle {
+  padding: 3px;
+  background: var(--fq-surface-soft);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: var(--fq-neu-pressed);
+}
+
+.theme-option.active,
+body[data-theme="light"] .theme-option.active,
+body[data-theme="dark"] .theme-option.active {
+  background: var(--fq-surface);
+  color: var(--fq-ink);
+  box-shadow: var(--fq-neu-raised);
+}
+
+.status-upgrade {
+  background: var(--fq-blue);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 3px 0 #0052a3, inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Infinite Raid keeps Apple's light/dark tile rhythm and adds depth by layer. */
+body.raid-mode-open #app-screen,
+body.raid-mode-open .content,
+.raid-screen {
+  background: var(--fq-canvas);
+  color: var(--fq-ink);
+}
+
+.raid-sticky,
+body[data-theme="dark"] .raid-sticky {
+  background: color-mix(in srgb, var(--fq-canvas) 82%, transparent);
+  border-bottom: 1px solid var(--fq-hairline);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.story-back,
+body[data-theme="dark"] .story-back {
+  background: var(--fq-glass-strong);
+  color: var(--fq-ink);
+  border: 1px solid var(--fq-glass-line);
+  box-shadow: var(--fq-neu-raised);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.raid-hero,
+body[data-theme="dark"] .raid-hero {
+  min-height: 360px;
+  background: var(--fq-surface);
+  color: var(--fq-ink);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 18px 38px rgba(29, 29, 31, 0.09);
+  perspective: 800px;
+}
+
+.raid-rings {
+  transform: translateZ(4px);
+}
+
+.raid-avatar {
+  transform: translateX(-50%) translateZ(24px);
+}
+
+.raid-hero h2 {
+  color: var(--fq-ink);
+  font-size: 40px;
+}
+
+.raid-hero p,
+body[data-theme="dark"] .raid-hero p {
+  color: var(--fq-muted);
+}
+
+.raid-stat,
+body[data-theme="dark"] .raid-stat {
+  min-width: 0;
+  color: var(--fq-ink);
+}
+
+.raid-stat strong,
+body[data-theme="dark"] .raid-stat strong {
+  color: var(--fq-ink);
+}
+
+.raid-challenge,
+body[data-theme="dark"] .raid-challenge {
+  min-height: 86px;
+  background: var(--fq-glass);
+  color: var(--fq-ink);
+  border: 1px solid var(--fq-glass-line);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56), 0 10px 24px rgba(29, 29, 31, 0.06);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+.raid-challenge.active,
+body[data-theme="dark"] .raid-challenge.active {
+  background: var(--fq-blue-soft);
+  border-color: color-mix(in srgb, var(--fq-blue) 56%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fq-blue) 24%, transparent), var(--fq-neu-raised);
+  transform: translateY(-2px);
+}
+
+.raid-challenge strong,
+body[data-theme="dark"] .raid-challenge strong {
+  color: var(--fq-ink);
+}
+
+.raid-challenge small,
+.raid-challenge-tag,
+body[data-theme="dark"] .raid-challenge small,
+body[data-theme="dark"] .raid-challenge-tag {
+  color: var(--fq-muted);
+}
+
+.raid-challenge-meta,
+body[data-theme="dark"] .raid-challenge-meta {
+  background: var(--fq-blue-soft);
+  color: var(--fq-blue);
+  border: 1px solid color-mix(in srgb, var(--fq-blue) 18%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36);
+}
+
+/* Pose mode is a dark spatial HUD floating above the camera feed. */
+.pose-shade {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.82), transparent 30%), linear-gradient(0deg, rgba(0, 0, 0, 0.9), transparent 46%);
+}
+
+.pose-close,
+.pose-metric,
+.pose-feedback {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(29, 29, 31, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+
+.pose-metric {
+  border-radius: 11px;
+}
+
+.pose-feedback {
+  border-radius: 11px;
+}
+
+/* Floating bottom navigation is the clearest liquid-glass object in the app. */
+.bottom-nav,
+body[data-theme="light"] .bottom-nav,
+body[data-theme="dark"] .bottom-nav {
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  height: 72px;
+  padding: 6px;
+  overflow: visible;
+  background: var(--fq-glass);
+  border: 1px solid var(--fq-glass-line);
+  border-radius: 18px;
+  box-shadow: 0 18px 38px rgba(29, 29, 31, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+body[data-theme="dark"] .bottom-nav {
+  box-shadow: 0 22px 46px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.nav {
+  border-radius: 11px;
+}
+
+.nav.active,
+.nav:not(.play).active {
+  background: var(--fq-blue-soft);
+  color: var(--fq-blue);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+.play-inner,
+body[data-theme="light"] .play-inner,
+body[data-theme="dark"] .play-inner {
+  top: -13px;
+  width: 56px;
+  height: 56px;
+}
+
+.toast,
+.toast.glass-card {
+  background: rgba(29, 29, 31, 0.88);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: var(--fq-glass-blur);
+  -webkit-backdrop-filter: var(--fq-glass-blur);
+}
+
+/* Login combines a minimal canvas, recessed fields, and one clay action. */
+.login-content,
+body[data-theme="light"] .login-content,
+body[data-theme="dark"] .login-content {
+  background: var(--fq-canvas);
+}
+
+.login-header h1,
+body[data-theme="light"] .login-header h1,
+body[data-theme="dark"] .login-header h1 {
+  color: var(--fq-ink);
+  font-size: 50px;
+}
+
+.login-header p {
+  color: var(--fq-muted);
+}
+
+.auth-mode-toggle,
+body[data-theme="light"] .auth-mode-toggle,
+body[data-theme="dark"] .auth-mode-toggle {
+  background: var(--fq-surface-soft);
+  border: 1px solid var(--fq-hairline);
+  box-shadow: var(--fq-neu-pressed);
+}
+
+.auth-mode.active,
+body[data-theme="light"] .auth-mode.active,
+body[data-theme="dark"] .auth-mode.active {
+  background: var(--fq-surface);
+  color: var(--fq-ink);
+  box-shadow: var(--fq-neu-raised);
+}
+
+@media (max-width: 360px) {
+  .content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .section-head h1 {
+    font-size: 32px;
+  }
+
+  .story-card {
+    min-height: 154px;
+    border-radius: 18px;
+  }
+
+  .story-card-copy strong {
+    max-width: 185px;
+    font-size: 30px;
+  }
+
+  .story-card-copy small {
+    max-width: 178px;
+    font-size: 13px;
+  }
+
+  .story-title-pill strong {
+    font-size: 21px;
+  }
+
+  .story-play-button {
+    flex-basis: 64px;
+    width: 64px;
+    margin-right: 12px;
+    border-radius: 9999px;
+  }
+
+  .monster-pick {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .monster-orb {
+    width: 56px;
+    height: 56px;
+  }
+
+  .raid-grid {
+    gap: 7px;
+  }
+
+  .raid-stat {
+    min-height: 96px;
+    padding: 12px 10px;
+  }
+
+  .raid-stat span {
+    font-size: 10px;
+  }
+
+  .raid-stat strong {
+    font-size: 24px;
+  }
+
+  .login-header h1 {
+    font-size: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-card,
+  .quest-card,
+  .item-card,
+  .raid-challenge,
+  .equip-stage,
+  .slot,
+  .inv-cell,
+  .item-art,
+  .monster-orb,
+  .player {
+    transition: none;
+  }
+}
