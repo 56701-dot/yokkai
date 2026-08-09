@@ -873,10 +873,26 @@ const PoseTrainer = (() => {
     ctx.restore();
   }
 
+  function waitForMediaPipe(timeoutMs = 15000) {
+    const startedAt = Date.now();
+    return new Promise((resolve, reject) => {
+      const check = () => {
+        if (window.Pose && window.Camera) {
+          resolve();
+          return;
+        }
+        if (Date.now() - startedAt >= timeoutMs) {
+          reject(new Error("MediaPipe could not load. Check your connection and refresh the page."));
+          return;
+        }
+        window.setTimeout(check, 100);
+      };
+      check();
+    });
+  }
+
   async function ensurePose() {
-    if (!window.Pose || !window.Camera) {
-      throw new Error("MediaPipe is still loading.");
-    }
+    await waitForMediaPipe();
     if (session.pose) return session.pose;
 
     session.pose = new window.Pose({

@@ -23,9 +23,12 @@ export default function RootLayout({
     <html lang="th">
       <body data-theme="light">
         {children}
+        <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" strategy="beforeInteractive" crossOrigin="anonymous" />
+        <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" strategy="beforeInteractive" crossOrigin="anonymous" />
+        <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" strategy="beforeInteractive" crossOrigin="anonymous" />
         <Script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" strategy="afterInteractive" />
         <Script src="/js/supabase-config.js" strategy="afterInteractive" />
-        <Script src="/js/script.js?v=raid-reach-4" strategy="afterInteractive" />
+        <Script src="/js/script.js?v=raid-reach-5" strategy="afterInteractive" />
         <Script src="/js/supabase-auth.js" strategy="afterInteractive" />
       </body>
     </html>
