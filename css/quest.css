@@ -153,6 +153,7 @@ body[data-theme="light"] .quest-card .btn-primary:disabled {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  background: #05070b;
 }
 
 .pose-video,
@@ -161,7 +162,8 @@ body[data-theme="light"] .quest-card .btn-primary:disabled {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transform: scaleX(-1);
 }
 
